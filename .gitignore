@@ -1,0 +1,6 @@
+private/
+.DS_Store
+*.bak
+__pycache__/
+*.pyc
+.claude/settings.local.json
