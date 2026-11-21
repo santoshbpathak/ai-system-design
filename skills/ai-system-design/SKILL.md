@@ -22,18 +22,20 @@ If `ARCHITECTURE.md` already exists: read it first, check the change against sec
 
 ## The Process (produces ARCHITECTURE.md)
 
+Paths below (`scripts/`, `templates/`) are relative to the folder this file is in.
+
 1. **Ask the 4 sizing questions** in one message, each with a default in brackets:
    users & frequency · latency budget · price (per user for B2C, **per client company for B2B**) · what data it touches.
    Run steps 2–3 on the defaults in the same reply so the user sees a draft bill, not just questions. If the user says "go", "defaults" or "ship fast", proceed on the defaults and mark each one `ASSUMED` in section 1 — the pre-flight still happens.
 2. **Run the napkin math.** Look up current model prices (provider pricing page or openrouter.ai). If you cannot look them up, use a placeholder and write `UNVERIFIED placeholder` next to it in section 2 and in your reply. All prices are **USD**; `--fx` only adds a local-currency column.
-   - B2C: `python3 ~/.claude/skills/ai-system-design/scripts/napkin.py --dau … --msgs … --in-tokens … --out-tokens … --in-price … --out-price … --price-per-user …`
+   - B2C: `python3 scripts/napkin.py --dau … --msgs … --in-tokens … --out-tokens … --in-price … --out-price … --price-per-user …`
    - B2B: same, but `--tenants … --price-per-tenant …` instead of `--price-per-user`
    - Add `--prompt-cache`, `--response-cache`, `--fx` (INR rate) when known. Paste command + output into section 2.
 3. **Pick the lowest rung** of the pattern ladder that works (below). Justify anything above RAG.
-4. **Copy the template** `~/.claude/skills/ai-system-design/templates/ARCHITECTURE.md` to the project root and fill every section. `N/A — reason` is allowed; blank is not.
+4. **Copy the template** `templates/ARCHITECTURE.md` to the project root and fill every section. `N/A — reason` is allowed; blank is not.
    **Day-one depth:** sections 1–6 in full. Sections 7–9 can be one line per row for the launch stage (e.g. "timeout 20s, fallback: one cheaper model") — the row must exist, the detail can grow later.
-5. **Seed BUILD.md**: put the napkin numbers under *Golden numbers* and the scale triggers under *Next action / Traps* as relevant.
-6. **Show the user** the sizing table, the monthly bill, and any red flag (margin < 70%, secrets in prompt, no tenant filter). Then hand off to `spec` / `writing-plans` / implementation.
+5. **Make it stick.** Add one line to the project's agent instructions file (`AGENTS.md`, `CLAUDE.md`, or whichever file the agent in use reads; create `AGENTS.md` if there is none): "Read ARCHITECTURE.md before changing the system; update it when a change touches its sections." If the project keeps a handover file such as `BUILD.md`, copy the napkin numbers and scale triggers into it.
+6. **Show the user** the sizing table, the monthly bill, and any red flag (margin < 70%, secrets in prompt, no tenant filter). Then move on to the spec, the plan or the implementation.
 
 ## The Five Rules
 

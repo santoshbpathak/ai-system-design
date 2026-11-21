@@ -21,17 +21,18 @@ Open an issue with any of these:
 
 | File | What it is |
 |---|---|
-| `skills/ai-system-design/SKILL.md` | The instructions Claude follows |
-| `skills/ai-system-design/templates/ARCHITECTURE.md` | The blank file Claude fills in |
+| `skills/ai-system-design/SKILL.md` | The instructions the agent follows |
+| `skills/ai-system-design/templates/ARCHITECTURE.md` | The blank file the agent fills in |
 | `skills/ai-system-design/scripts/napkin.py` | The bill calculator |
-| `hooks/architecture-check.sh` | The check that runs when a session starts |
+| `hooks/architecture-check.sh` | The check that runs when a Claude Code session starts |
+| `lib-agents.sh` | The list of supported agents and where each keeps its skills |
 | `examples/` | Filled-in examples |
 
 ### Testing a change to the skill
 
-A skill is a set of instructions, so the test is whether Claude behaves differently with it.
+A skill is a set of instructions, so the test is whether the agent behaves differently with it. Use whichever coding agent you have, and say which one in the pull request.
 
-1. **Before:** in a fresh Claude Code session without your change, ask for something like *"I want to build a support chatbot where several companies upload their own documents. Set up the architecture and give me the plan."* Note what Claude skips.
+1. **Before:** in a fresh session without your change, ask for something like *"I want to build a support chatbot where several companies upload their own documents. Set up the architecture and give me the plan."* Note what the agent skips.
 2. **After:** install your change, start a fresh session, ask the same thing.
 3. In the pull request, say what was missing before and present after.
 
@@ -47,19 +48,25 @@ python3 skills/ai-system-design/scripts/napkin.py --dau 5000 --msgs 20 --in-toke
 
 ### Testing a change to the installer or the check
 
-Point the installer at a scratch folder so your real settings aren't touched:
+Point the installer at a scratch folder so your real settings aren't touched. The empty folders stand in for installed agents:
 
 ```bash
-CLAUDE_HOME=/tmp/claude-test bash install.sh
-CLAUDE_HOME=/tmp/claude-test bash uninstall.sh
+mkdir -p /tmp/skill-test/.claude /tmp/skill-test/.codex
+INSTALL_HOME=/tmp/skill-test bash install.sh
+INSTALL_HOME=/tmp/skill-test bash uninstall.sh
 ```
+
+### Adding support for another agent
+
+Add its name and skills folder to `lib-agents.sh`, add a row to the table in README.md, and say in the pull request that you ran the skill in that agent.
 
 ## House rules
 
 - **Plain words.** If a term needs explaining, explain it the first time it appears.
 - **No model prices in the files.** They change. The calculator asks for them on purpose.
 - **Don't name specific products as the only answer.** Offer them as examples.
-- **Keep `SKILL.md` short.** Claude reads all of it every time. Add a line only if a test shows it changes behaviour.
+- **Keep it agent-neutral.** `SKILL.md`, the template and the example must not name one agent's folders, commands or other skills. Paths inside the skill are relative to the skill's own folder.
+- **Keep `SKILL.md` short.** The agent reads all of it every time. Add a line only if a test shows it changes behaviour.
 - **Every section of the template stays required.** "Not applicable, because…" is a fine answer. Blank is not.
 
 ## Licence

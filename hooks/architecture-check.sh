@@ -1,7 +1,8 @@
 #!/bin/bash
-# SessionStart hook: make the ai-system-design pre-flight happen in every project.
-# - No ARCHITECTURE.md -> tell Claude to run the skill before any implementation code.
-# - ARCHITECTURE.md exists -> tell Claude to read it before changing the system.
+# Startup check for Claude Code (a SessionStart hook). Optional extra: other agents
+# get the same behaviour from the block that `install.sh --project` adds to AGENTS.md.
+# - No ARCHITECTURE.md -> tell the agent to run the skill before any implementation code.
+# - ARCHITECTURE.md exists -> tell the agent to read it before changing the system.
 input="$(cat)"
 dir="${CLAUDE_PROJECT_DIR:-}"
 if [ -z "$dir" ] && command -v jq >/dev/null 2>&1; then

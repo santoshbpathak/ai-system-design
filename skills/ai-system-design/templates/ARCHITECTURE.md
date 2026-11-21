@@ -15,10 +15,10 @@
 
 ## 2. Napkin math
 
-Command run (paste it so it can be re-run):
+Command run from the skill's folder (paste it so it can be re-run):
 
 ```
-python3 ~/.claude/skills/ai-system-design/scripts/napkin.py --dau … --msgs … --in-tokens … --out-tokens … --in-price … --out-price … [--price-per-user … | --tenants … --price-per-tenant …] --prompt-cache … --response-cache … --fx …
+python3 scripts/napkin.py --dau … --msgs … --in-tokens … --out-tokens … --in-price … --out-price … [--price-per-user … | --tenants … --price-per-tenant …] --prompt-cache … --response-cache … --fx …
 ```
 
 | Metric | Value |

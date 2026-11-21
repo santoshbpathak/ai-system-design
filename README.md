@@ -1,12 +1,14 @@
 # AI System Design
 
-**The questions a senior engineer would ask before you build. Claude asks them for you, in about five minutes.**
+**The questions a senior engineer would ask before you build. Your coding agent asks them for you, in about five minutes.**
 
 AI can write your app in an afternoon. It won't tell you what the app will cost to run each month, whether one customer can see another customer's data, or what happens on the day your AI provider goes down.
 
 Those are design decisions. Most builders skip them, usually because nobody told them the questions existed.
 
-This is a free skill for [Claude Code](https://claude.com/claude-code) that asks those questions before any code is written, does the maths, and writes the answers into one file in your project: `ARCHITECTURE.md`.
+This is a free skill for AI coding agents. A coding agent is a tool that writes code for you from plain-language requests: Claude Code, Codex, Cursor, Gemini CLI, GitHub Copilot, OpenCode and others. A skill is a folder of instructions the agent follows for one kind of job.
+
+This one asks those questions before any code is written, does the maths, and writes the answers into one file in your project: `ARCHITECTURE.md`. It isn't tied to any one agent or AI provider. It uses the open [Agent Skills](https://agentskills.io) format, which most coding agents read.
 
 ---
 
@@ -49,13 +51,13 @@ Suggested hard spend cap (2x expected): $867.51 / month
 
 ("Tokens" are the units AI providers bill in, roughly three-quarters of a word each. "Caching" means reusing work instead of paying for it twice.)
 
-**3. Writes `ARCHITECTURE.md`.** One file with ten short sections: your numbers, your bill, how customer data is kept apart, what happens when things fail, and the specific numbers that tell you when it's time to add the next piece. Claude reads it at the start of every later session, so the decisions stick.
+**3. Writes `ARCHITECTURE.md`.** One file with ten short sections: your numbers, your bill, how customer data is kept apart, what happens when things fail, and the specific numbers that tell you when it's time to add the next piece. The skill also adds a line to your project's agent instructions telling the agent to read the file before changing the system, so the decisions stick.
 
 See a filled-in one: [examples/ARCHITECTURE.example.md](examples/ARCHITECTURE.example.md).
 
 ## Install
 
-You need Claude Code and a Mac or Linux machine. Python 3 is used for the calculator and is already on most machines.
+You need a coding agent that supports skills, and a Mac or Linux machine. Python 3 is used for the calculator and is already on most machines.
 
 ```bash
 git clone https://github.com/santoshbpathak/ai-system-design.git
@@ -63,29 +65,57 @@ cd ai-system-design
 bash install.sh
 ```
 
-Then restart Claude Code, or reload your editor window.
+Then restart your coding agent, or reload your editor window.
 
-**What the installer changes on your machine:**
+The installer looks for the agents on your machine and copies the skill into each one's skills folder:
 
-- Copies the skill into `~/.claude/skills/ai-system-design/`.
-- Adds a small check that runs when a Claude Code session starts. If the project has no `ARCHITECTURE.md`, it reminds Claude to run the skill before building. If the file exists, it reminds Claude to read it.
-- Adds one entry to `~/.claude/settings.json` to switch that check on. Your old settings are saved as `settings.json.bak` first. This step needs a tool called `jq`; if you don't have it, the installer shows you the three lines to paste in yourself.
+| Agent | Where the skill goes |
+|---|---|
+| Claude Code | `~/.claude/skills/` |
+| Codex, Cline, Zed, Warp and others that read the shared folder | `~/.agents/skills/` |
+| Cursor | `~/.cursor/skills/` |
+| Gemini CLI | `~/.gemini/skills/` |
+| GitHub Copilot | `~/.copilot/skills/` |
+| OpenCode | `~/.config/opencode/skills/` |
+| Windsurf | `~/.codeium/windsurf/skills/` |
+| Goose | `~/.config/goose/skills/` |
 
-Prefer to run it only when you ask? Use `bash install.sh --no-hook`.
+The shared folder is always filled in, because several agents read it.
 
-To remove everything: `bash uninstall.sh`. Your projects' `ARCHITECTURE.md` files are left alone.
+**Other ways to install:**
+
+- **One agent only:** `bash install.sh --agent codex` (run `bash install.sh --list` for the names).
+- **An agent that isn't in the table:** `bash install.sh --dir /path/to/its/skills/folder`.
+- **With the `skills` tool,** if you have Node.js: `npx skills add santoshbpathak/ai-system-design -g`. It supports many more agents and asks which ones you want.
+- **No skills support at all:** clone the repo and tell your agent *"Read skills/ai-system-design/SKILL.md in that folder and follow it for this project."*
+
+### Make it run by itself
+
+Installed like this, the skill runs when you ask for it, and most agents will also pick it up when you describe a new project. To make sure it is never skipped:
+
+- **Any agent:** add a short note to your project's `AGENTS.md`, the instructions file most coding agents read at the start of a session.
+
+  ```bash
+  bash install.sh --project /path/to/your/project
+  ```
+
+  The note says: no `ARCHITECTURE.md` yet, run the skill before building; if there is one, read it first.
+
+- **Claude Code:** nothing to do. The installer also adds a small check that runs when a session starts and does the same job in every project. It adds one entry to `~/.claude/settings.json` and saves your old settings as `settings.json.bak` first. This step needs a tool called `jq`; without it, the installer shows you the lines to paste in yourself. To leave the check out, use `bash install.sh --no-hook`.
+
+To remove everything: `bash uninstall.sh`. Your projects' `ARCHITECTURE.md` and `AGENTS.md` files are left alone.
 
 Windows isn't tested yet. It should work inside WSL. If you try it, please tell us how it went.
 
 ## Use it
 
-- **Starting something new:** open the folder in Claude Code and describe what you want to build. Claude runs the pre-flight first.
+- **Starting something new:** open the folder in your coding agent and describe what you want to build. The agent runs the pre-flight first.
 - **On a project you've already built:** say *"Run ai-system-design on this project."*
-- **Any time:** type `/ai-system-design`.
-- **Just the bill:** run the calculator yourself.
+- **By name:** most agents let you call a skill directly, for example by typing `/ai-system-design` in Claude Code.
+- **Just the bill:** run the calculator yourself from the folder you cloned.
 
   ```bash
-  python3 ~/.claude/skills/ai-system-design/scripts/napkin.py \
+  python3 skills/ai-system-design/scripts/napkin.py \
     --dau 300 --msgs 6 --in-tokens 3000 --out-tokens 300 \
     --in-price 3 --out-price 15
   ```
@@ -110,12 +140,13 @@ Plus one habit: **start boring.** One app, one database, one AI provider. Add mo
 
 ```
 skills/ai-system-design/
-  SKILL.md                     the instructions Claude follows
+  SKILL.md                     the instructions your agent follows
   templates/ARCHITECTURE.md    the blank file it fills in
   scripts/napkin.py            the bill calculator
-hooks/architecture-check.sh    the startup check
+hooks/architecture-check.sh    the startup check for Claude Code
 examples/                      a filled-in ARCHITECTURE.md
-install.sh, uninstall.sh
+install.sh, uninstall.sh       copy the skill into your agents' folders, or take it out
+lib-agents.sh                  the list of agents and their folders
 ```
 
 ## Help make it better
@@ -130,7 +161,7 @@ Open an issue to share any of these. If you'd like to change the files yourself,
 
 ## Credits
 
-The five rules, the four questions and the "nine boxes" picture come from a live system design session run by the Outskill community. This project turns those ideas into something Claude does for you automatically.
+The five rules, the four questions and the "nine boxes" picture come from a live system design session run by the Outskill community. This project turns those ideas into something your coding agent does for you automatically.
 
 ## Licence
 

@@ -17,7 +17,7 @@
 ## 2. Napkin math
 
 ```
-python3 ~/.claude/skills/ai-system-design/scripts/napkin.py --dau 300 --msgs 6 --in-tokens 3000 --out-tokens 300 --in-price 3 --out-price 15 --prompt-cache 0.5 --response-cache 0.15 --tenants 10 --price-per-tenant 150
+python3 scripts/napkin.py --dau 300 --msgs 6 --in-tokens 3000 --out-tokens 300 --in-price 3 --out-price 15 --prompt-cache 0.5 --response-cache 0.15 --tenants 10 --price-per-tenant 150
 ```
 
 | Metric | Value |
